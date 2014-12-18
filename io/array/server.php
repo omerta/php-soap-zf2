@@ -2,10 +2,10 @@
 ini_set("soap.wsdl_cache_enabled", "0");
 
 function pc_authenticate_user($username, $password) {
-//    $is_valid = true;
-    $is_valid = false;
+    $users = array('glengemann' => '123ABC',
+                   'omerta'     => 'ABC123');
     
-    if ($is_valid) {
+    if (isset($users[$username]) && ($users[$username] == $password)) {
         return true;
     } else {
         return false;

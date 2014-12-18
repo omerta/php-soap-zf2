@@ -1,8 +1,8 @@
 <?php
 ini_set("soap.sdl_cache_enabled", "0");
 
-$client = new SOAPClient('http://webservice.io/array/server.php?wsdl', array('login'    => "some_name",
-'password' => "some_password"));
+$client = new SOAPClient('http://webservice.io/array/server.php?wsdl', array('login'    => "omerta",
+                                                                             'password' => "ABC123"));
 
 /* try { */
 /*     var_dump($client->__soapCall('return_time')); */
