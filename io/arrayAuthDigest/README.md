@@ -72,6 +72,10 @@ $username = pc_validate_digest($realm, $users);
 
 ```
 
+Tanto la autenticación «HTTP Basic» y «HTTP Digest» puede ser usado si estamos ejecutando PHP como un programa CGI. Si no podemos ejecutar PHP como un modulo del servidor, podemos usar la «cookie authentication» que se discute en la receta 8.10.
+
+Otro problema con la «HTTP authentication» es que esta no provee una manera no trivial para que un usuario cierre sesión, a menos que cierre el navegador. El manual en linea de PHP tiene algunas sugerencias de métodos para cerrar sesión, adaptables a diferentes escenarios que combinan servidores y navegadores.
+
 ## 15.8 Usando SOAP con autenticación (PHP Cookbook o'really) ##
 
 # Problema #

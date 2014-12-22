@@ -6,6 +6,7 @@ Primeros paso para publicar servicios web con php usando soap y zend framework.
 ## Requerimientos ##
 
 * Debian GNU/Linux 8.0
+* Apache2
 * PHP5 v5.6.2-1
 * SOAP
 * docblocks
@@ -17,7 +18,7 @@ Primeros paso para publicar servicios web con php usando soap y zend framework.
 
 ## Código del Servidor ##
 
-Regresaremos un array asociado. Generar el archivo WSDL depende de la declaración *class Universidad*, que luego es usada en la clase *class educacion* por el bloque del comentario que antecede la función *function universidad()*.
+Regresaremos un array asociado. Generar el archivo WSDL depende de la declaración *class Universidad*, que luego es usada en la clase *class educacion* por el bloque de comentario que antecede la función *function universidad()*.
 
 ```php
 <?php
