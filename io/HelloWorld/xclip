@@ -1,0 +1,113 @@
+<h1 id="hello-world-php-soap-php-soap-zf2">Hello World PHP SOAP (php-soap-zf2)</h1>
+<p>Primeros paso para publicar servicios web con php usando soap y zend framework.</p>
+<h2 id="requerimientos">Requerimientos</h2>
+<ul>
+<li>Debian GNU/Linux 8.0</li>
+<li>PHP5 v5.6.2-1</li>
+<li>SOAP</li>
+<li>docblocks</li>
+<li>Zend Framework 2 (v2.3.2)</li>
+</ul>
+<h2 id="zend-framework">Zend Framework</h2>
+<ul>
+<li>AutoDiscovery, para la autogeneración del WSDL. Las Herramientas de autodiscovery utiliza «PHP docblocks» para determinar los valores y los tipos de datos que se regresan al cliente.</li>
+</ul>
+<h2 id="código-del-servidor">Código del Servidor</h2>
+<p>Regresaremos un array asociado. Generar el archivo WSDL depende de la declaración <em>class Universidad</em>, que luego es usada por la clase <em>class educacion</em> en el bloque del comentario que antecede la función <em>function universidad()</em>.</p>
+<pre class="sourceCode php"><code class="sourceCode php"><span class="kw">&lt;?php</span>
+<span class="fu">ini_set</span><span class="ot">(</span><span class="st">&quot;soap.wsdl_cache_enabled&quot;</span><span class="ot">,</span> <span class="st">&quot;0&quot;</span><span class="ot">);</span>
+
+<span class="kw">class</span> Universidad {
+    <span class="co">/** </span><span class="kw">@var</span><span class="co"> </span><span class="st">int</span><span class="co"> */</span>
+    <span class="kw">public</span> <span class="kw">$cod_institucion</span><span class="ot">;</span>
+    <span class="co">/** </span><span class="kw">@var</span><span class="co"> </span><span class="st">string</span><span class="co"> */</span>
+    <span class="kw">public</span> <span class="kw">$siglas</span><span class="ot">;</span>
+    <span class="co">/** </span><span class="kw">@var</span><span class="co"> </span><span class="st">int</span><span class="co"> */</span>
+    <span class="kw">public</span> <span class="kw">$cod_carrera</span><span class="ot">;</span>
+}
+
+<span class="kw">class</span> educacion{
+    <span class="co">/**</span>
+<span class="co">     * </span><span class="kw">@return</span><span class="co"> Universidad[] arrayOfLetters</span>
+<span class="co">     */</span>
+    <span class="kw">public</span> <span class="kw">function</span> universidad<span class="ot">()</span>
+    {
+        <span class="kw">$arreglo</span><span class="ot">[]</span>=<span class="fu">array</span><span class="ot">(</span><span class="st">&quot;cod_institucion&quot;</span>=&gt;<span class="st">&#39;000001&#39;</span><span class="ot">,</span><span class="st">&quot;siglas&quot;</span>=&gt;<span class="st">&#39;UCV&#39;</span><span class="ot">,</span><span class="st">&quot;cod_carrera&quot;</span>=&gt;<span class="st">&#39;006&#39;</span><span class="ot">);</span>
+        <span class="kw">$arreglo</span><span class="ot">[]</span>=<span class="fu">array</span><span class="ot">(</span><span class="st">&quot;cod_institucion&quot;</span>=&gt;<span class="st">&#39;000002&#39;</span><span class="ot">,</span><span class="st">&quot;siglas&quot;</span>=&gt;<span class="st">&#39;UCV&#39;</span><span class="ot">,</span><span class="st">&quot;cod_carrera&quot;</span>=&gt;<span class="st">&#39;007&#39;</span><span class="ot">);</span>
+        <span class="kw">$arreglo</span><span class="ot">[]</span>=<span class="fu">array</span><span class="ot">(</span><span class="st">&quot;cod_institucion&quot;</span>=&gt;<span class="st">&#39;000003&#39;</span><span class="ot">,</span><span class="st">&quot;siglas&quot;</span>=&gt;<span class="st">&#39;UNEFA&#39;</span><span class="ot">,</span><span class="st">&quot;cod_carrera&quot;</span>=&gt;<span class="st">&#39;008&#39;</span><span class="ot">);</span>
+        <span class="kw">return</span> <span class="kw">$arreglo</span><span class="ot">;</span>
+    }
+}
+
+<span class="co">/* load framework ZF2 */</span>
+<span class="fu">set_include_path</span><span class="ot">(</span><span class="st">&#39;/srv/www/io/ZendFramework-2.3.2/library&#39;</span><span class="ot">);</span>
+<span class="kw">require_once</span> <span class="st">&#39;Zend/Loader/StandardAutoloader.php&#39;</span><span class="ot">;</span>
+<span class="kw">$loader</span> = <span class="kw">new</span> Zend\Loader\StandardAutoloader<span class="ot">(</span><span class="fu">array</span><span class="ot">(</span><span class="st">&#39;autoregister_zf&#39;</span> =&gt; <span class="kw">true</span><span class="ot">));</span>
+<span class="kw">$loader</span>-&gt;registerPrefix<span class="ot">(</span><span class="st">&#39;Zend&#39;</span><span class="ot">,</span> <span class="st">&#39;/srv/www/io/ZendFramework-2.3.2/library&#39;</span><span class="ot">);</span>
+<span class="kw">$loader</span>-&gt;register<span class="ot">();</span>
+
+<span class="co">/* class autodiscover and Zend\Soap\Server */</span>
+<span class="kw">if</span> <span class="ot">(</span><span class="fu">isset</span> <span class="ot">(</span> <span class="kw">$_GET</span> <span class="ot">[</span><span class="st">&#39;wsdl&#39;</span> <span class="ot">]</span> <span class="ot">))</span> {
+    <span class="kw">$strategy</span> = <span class="kw">new</span> Zend\Soap\Wsdl\ComplexTypeStrategy\ArrayOfTypeComplex <span class="ot">();</span>
+    <span class="kw">$server</span> = <span class="kw">new</span> Zend\Soap\AutoDiscover <span class="ot">(</span> <span class="kw">$strategy</span> <span class="ot">);</span>
+    <span class="kw">$server</span>-&gt;setServiceName <span class="ot">(</span> <span class="st">&#39;WebServiceEducacion&#39;</span> <span class="ot">);</span>
+} <span class="kw">else</span> {
+    <span class="kw">$server</span> = <span class="kw">new</span> Zend\Soap\Server <span class="ot">();</span>
+}
+
+<span class="kw">$uri</span> = <span class="st">&#39;http://webservice.io/HelloWorld/server.php&#39;</span><span class="ot">;</span>
+<span class="kw">$server</span>-&gt;setClass <span class="ot">(</span><span class="st">&#39;educacion&#39;</span><span class="ot">);</span>
+<span class="kw">$server</span>-&gt;setUri <span class="ot">(</span> <span class="kw">$uri</span> <span class="ot">);</span>
+<span class="kw">$server</span>-&gt;handle <span class="ot">();</span>
+
+<span class="kw">?&gt;</span></code></pre>
+<h2 id="código-del-cliente">Código del cliente</h2>
+<pre class="sourceCode php"><code class="sourceCode php"><span class="kw">&lt;?php</span>
+<span class="fu">ini_set</span><span class="ot">(</span><span class="st">&quot;soap.sdl_cache_enabled&quot;</span><span class="ot">,</span> <span class="st">&quot;0&quot;</span><span class="ot">);</span>
+
+<span class="kw">$client</span> = <span class="kw">new</span> SOAPClient<span class="ot">(</span><span class="st">&#39;http://webservice.io/HelloWorld/server.php?wsdl&#39;</span><span class="ot">);</span>
+
+<span class="kw">try</span> {
+    <span class="fu">var_dump</span><span class="ot">(</span><span class="kw">$client</span>-&gt;__getFunctions<span class="ot">());</span>
+} <span class="kw">catch</span><span class="ot">(</span><span class="kw">Exception</span> <span class="kw">$e</span><span class="ot">)</span> {
+    <span class="fu">print_r</span><span class="ot">(</span><span class="kw">$e</span><span class="ot">);</span>
+}
+
+<span class="kw">try</span> {
+    <span class="kw">$result</span> = <span class="kw">$client</span>-&gt;universidad<span class="ot">();</span>
+    <span class="fu">print_r</span><span class="ot">(</span><span class="kw">$result</span><span class="ot">);</span>
+    <span class="fu">print</span> <span class="st">&quot;</span><span class="kw">\n</span><span class="st">&quot;</span><span class="ot">;</span>
+} <span class="kw">catch</span><span class="ot">(</span><span class="kw">Exception</span> <span class="kw">$e</span><span class="ot">)</span> {
+    <span class="fu">print_r</span><span class="ot">(</span><span class="kw">$e</span><span class="ot">);</span>
+}
+
+<span class="kw">?&gt;</span></code></pre>
+<p>SRC: <a href="https://github.com/omerta/php-soap-zf2/tree/master/io/HelloWorld">Descargar SRC</a></p>
+<h2 id="apache2">Apache2</h2>
+<p>Puede valerse de un VirtualHost, no olvide agregar la linea que corresponda al archivo /etc/hosts.</p>
+<ol style="list-style-type: decimal">
+<li>a2enside 001-webservice.io.conf</li>
+<li>service apache2 reload</li>
+</ol>
+<h3 id="virtualhost">VirtualHost</h3>
+<pre class="conf"><code>&lt;VirtualHost *:80&gt;
+        ServerName webservice.io
+
+        DocumentRoot /srv/www/php-soap-zf2/io
+        &lt;Directory  /srv/www/php-soap-zf2/io/&gt;
+          Options Indexes FollowSymLinks
+          AllowOverride All
+          Require all granted
+        &lt;/Directory&gt;
+
+        LogLevel warn
+        ErrorLog /var/log/apache2/webservice.io_error.log
+        CustomLog /var/log/apache2/webservice.io_access.log combined
+&lt;/VirtualHost&gt;</code></pre>
+<h2 id="bibliografía">Bibliografía</h2>
+<ul>
+<li>http://framework.zend.com/manual/2.0/en/modules/zend.soap.auto-discovery.html</li>
+<li>http://www.king-foo.be/2011/09/using-complex-types-with-zend_soap/</li>
+<li>SOAP and PHP in 2014. Fuente: http://www.whitewashing.de/2014/01/31/soap_and_php_in_2014.html</li>
+<li>https://github.com/yjwei/practices/tree/802ab1299f9c79cd67fc85bb40345a18fe0460f2/webservice</li>
+</ul>
